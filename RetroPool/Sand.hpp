@@ -3,20 +3,6 @@
 #include <iostream>
 
 
-enum class Type
-{
-	blank,
-	red,
-	green,
-};
-
-
-
-struct Cords
-{
-	int m_column, m_row;
-};
-
 class Sand
 {
 private:
@@ -24,10 +10,6 @@ private:
 	sf::RectangleShape sandShape;
 
 public:
-
-	Cords coordinates;
-	 
-	Type type;
 	Sand();
 	
 	void drawSand(sf::RenderWindow& window);

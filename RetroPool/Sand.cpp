@@ -2,9 +2,7 @@
 
 Sand::Sand()
 {
-	coordinates.m_column = 0;
-	coordinates.m_row = 0;
-	type = Type::blank;
+
 }
 
 void Sand::drawSand(sf::RenderWindow& window)

@@ -6,7 +6,7 @@ int main()
     
     sf::RenderWindow window(sf::VideoMode(800, 800), "coffie's game");
     window.setFramerateLimit(60);
-    Grid grid;
+    Grid game;
     while (window.isOpen())
     {
         sf::Event event;
@@ -21,10 +21,11 @@ int main()
             }
             
         }
-
+        //game.run();
+        game.gravity();
 
         window.clear();
-        grid.drawGrid(window);
+        game.drawGrid(window);
         window.display();
     }
 
