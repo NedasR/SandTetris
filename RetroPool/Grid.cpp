@@ -2,6 +2,7 @@
 
 Grid::Grid()
 {
+	m_texture.loadFromFile("assets/Tetriminos.png");
 	int gridOffsetX = GRID_OFFSET_X;
 	int sandSize = SAND_SIZE;
 	m_rectangle.setSize(sf::Vector2f(sandSize, sandSize));
@@ -67,14 +68,17 @@ void Grid::drawGrid(sf::RenderWindow& window)
 			}
 		}
 	}
+	window.draw(m_playerTetromino);
 }
 
 void Grid::spawnTetromino()
 {
-
-
-
-
+	m_playerTetromino.setTexture(m_texture);
+	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
+	m_playerTetromino.setPosition(sf::Vector2f(400, 790));
+	m_playerTetromino.setOrigin(40, 40);
+	m_playerTetromino.setColor(sf::Color::Blue);
+	m_playerTetromino.setScale(0.5, 0.5);
 }
 
 void Grid::swap(int Y,int X,const int axisY, const int axisX)
@@ -92,40 +96,4 @@ void Grid::swap(int Y,int X,const int axisY, const int axisX)
 
 		}
 	}
-
-
-	/*
-	std::cout << "axisY: " << axisY << " axisX: " << axisX << std::endl;
-	std::cout << "cord " << sand.coordinates.m_column << " " << sand.coordinates.m_row << std::endl;
-	std::cout << "cord " << m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].coordinates.m_column << " " << m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].coordinates.m_row << std::endl;
-	if (sand.type == Type::red)
-	{
-		std::cout << " red1 " << std::endl;
-	}
-	if (m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].type == Type::red)
-	{
-		std::cout << " red2 " << std::endl;
-	}
-
-
-	Sand temp = m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX];
-	m_grid[sand.coordinates.m_column + axisY-1][sand.coordinates.m_row + axisX] = sand;
-	Type a = sand.type;
-	sand = temp;
-	m_grid[sand.coordinates.m_column + axisY-1][sand.coordinates.m_row + axisX].type = a;
-
-
-	std::cout << "cord swaped " << sand.coordinates.m_column << " " << sand.coordinates.m_row << std::endl;
-	std::cout << "cord " << m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].coordinates.m_column << " " << m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].coordinates.m_row << std::endl;
-	if (sand.type == Type::blank)
-	{
-		std::cout << " blank1 " << std::endl;
-	}
-	if (m_grid[sand.coordinates.m_column + axisY][sand.coordinates.m_row + axisX].type == Type::blank)
-	{
-		std::cout << " blank2 " << std::endl;
-	}
-	//sand.type = Type::red;
-	//m_grid[sand.coordinates.m_row + axisY][sand.coordinates.m_column + axisX].type = Type::blank;
-	*/
 }

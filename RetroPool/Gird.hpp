@@ -1,7 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include<iostream>
-#include "Sand.hpp"
 #define GRID_OFFSET_X 200;
 #define SAND_SIZE 10.f;
 
@@ -12,7 +11,10 @@ private:
 
 	std::vector<std::vector<int>> m_grid;
 	sf::RectangleShape m_rectangle;
+	sf::Sprite m_playerTetromino;
+	sf::Texture m_texture;
 	sf::Vector2i m_gridSize;
+	int TX;
 
 public:
 
@@ -25,6 +27,17 @@ public:
 	void gravity();
 
 	void drawGrid(sf::RenderWindow& window);
+
+	void rotationUpdate() 
+	{
+		
+		TX++;
+	    m_playerTetromino.setRotation(90 * TX);
+		if (TX == 4)
+		{
+			TX = 0;
+		}
+	}
 
 	void spawnTetromino();
 

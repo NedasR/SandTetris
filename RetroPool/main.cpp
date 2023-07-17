@@ -7,6 +7,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 800), "coffie's game");
     window.setFramerateLimit(60);
     Grid game;
+    game.spawnTetromino();
     while (window.isOpen())
     {
         sf::Event event;
@@ -17,7 +18,10 @@ int main()
             }
             if (event.type == sf::Event::KeyPressed)
             {
-                
+                if (event.key.code == sf::Keyboard::R)
+                {
+                    game.rotationUpdate();
+                }
             }
             
         }
