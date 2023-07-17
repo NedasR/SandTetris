@@ -8,6 +8,7 @@ int main()
     window.setFramerateLimit(60);
     Grid game;
     game.spawnTetromino();
+    sf::Clock clock;
     while (window.isOpen())
     {
         sf::Event event;
@@ -26,7 +27,12 @@ int main()
             
         }
         //game.run();
-        game.gravity();
+        if (clock.getElapsedTime() >= sf::milliseconds(120))
+        {
+            game.gravity();
+            clock.restart();
+        }
+        game.playerGravity();
 
         window.clear();
         game.drawGrid(window);

@@ -4,16 +4,15 @@
 #define GRID_OFFSET_X 200;
 #define SAND_SIZE 10.f;
 
-
 class Grid
 {
 private:
-
 	std::vector<std::vector<int>> m_grid;
 	sf::RectangleShape m_rectangle;
 	sf::Sprite m_playerTetromino;
 	sf::Texture m_texture;
 	sf::Vector2i m_gridSize;
+	int m_playerGravity;
 	int TX;
 
 public:
@@ -25,6 +24,8 @@ public:
 	void gridSize(const int& sizeX, const int& sizeY);
 
 	void gravity();
+
+	void playerGravity();
 
 	void drawGrid(sf::RenderWindow& window);
 
@@ -41,5 +42,5 @@ public:
 
 	void spawnTetromino();
 
-	void swap(int Y, int X,const int Xaxis,const int Yaxis);
+	bool swap(int Y, int X,const int Xaxis,const int Yaxis);
  };
