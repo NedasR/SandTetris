@@ -41,9 +41,11 @@ public:
 
 	void tetriminoOrientationUpdate();
 
+	void printTetrimino(const int& cellX, const int& cellY);
+
 	void spawnTetromino();
 
-	void tetminoCollisionUpdate();
+	bool tetminoCollisionUpdate();
 
 	bool swap(int Y, int X,const int Xaxis,const int Yaxis);
  };

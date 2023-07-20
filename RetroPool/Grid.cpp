@@ -117,6 +117,11 @@ void Grid::drawGrid(sf::RenderWindow& window)
 				{
 					m_rectangle.setFillColor(sf::Color::Red);
 					m_rectangle.setPosition(sf::Vector2f((X * 10)+200,Y * 10));
+				} else
+				if (m_grid[Y][X] == 2)
+				{
+					m_rectangle.setFillColor(sf::Color::Blue);
+					m_rectangle.setPosition(sf::Vector2f((X * 10) + 200, Y * 10));
 				}
 
 				window.draw(m_rectangle);
@@ -128,8 +133,8 @@ void Grid::drawGrid(sf::RenderWindow& window)
 
 void Grid::spawnTetromino()
 {
-	m_playerTetromino.setTexture(m_tetrominoTex[2]);
-	m_currentTex = 2;
+	m_playerTetromino.setTexture(m_tetrominoTex[3]);
+	m_currentTex = 3;
 	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
 	m_playerTetromino.setPosition(sf::Vector2f(400, 30));
 	m_playerTetromino.setOrigin(40, 40);
@@ -144,7 +149,7 @@ void Grid::spawnTetromino()
 			sf::Color pixcolor = a.getPixel(20 * X,20 * Y);
 			if (static_cast<int>(pixcolor.b) > 0)
 			{
-				m_copyMatrix[Y][X] = 1;
+				m_copyMatrix[Y][X] = 2;
 				continue;
 			}
 			m_copyMatrix[Y][X] = 0;
@@ -164,7 +169,6 @@ void Grid::spawnTetromino()
 
 void Grid::rotationUpdate()
 {
-
 	TX++;
 	m_playerTetromino.setRotation(90 * TX);
 	tetriminoOrientationUpdate();
@@ -176,6 +180,7 @@ void Grid::rotationUpdate()
 
 void Grid::tetriminoOrientationUpdate()
 {
+	// this updates how the roatation of the player terimnio is current orientation into a matrix that is used for collision detection
 	for (int layer = 0; layer < TETROMINO_MATRIX_SIZE / 2;layer++)
 	{
 		
@@ -203,66 +208,44 @@ void Grid::tetriminoOrientationUpdate()
 	*/
 }
 
-void Grid::tetminoCollisionUpdate()
+void Grid::printTetrimino(const int& cellY, const int& cellX)
+{
+	for (int y = 0; y < TETROMINO_MATRIX_SIZE; y++)
+	{
+		for (int x = 0; x < TETROMINO_MATRIX_SIZE; x++)
+		{
+			if (m_grid[y][x] == 0)
+			{
+				m_grid[y + cellY][x + cellX] = m_copyMatrix[y][x];
+			}
+		}
+	}
+}
+
+bool Grid::tetminoCollisionUpdate()
 {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*
 	sf::Vector2f savedOrigin(m_playerTetromino.getOrigin());
 	m_playerTetromino.setOrigin(sf::Vector2f(0, 0));
-	int Y = m_playerTetromino.getPosition().y / m_gridSize.y;
-	int X = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / m_gridSize.x;
-	float size =  m_playerTetromino.getScale().x * SAND_SIZE * 2;
-	*/
+	int cellY = m_playerTetromino.getPosition().y / SAND_SIZE;
+	int cellX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
 
-	/*
-	sf::Transform textureTransform = m_playerTetromino.getTransform().getInverse();
-	sf::Vector2f texturecords = textureTransform.transformPoint(sf::Vector2f(0, 0));
-	texturecords.x /= TEXTURE_SIZE;
-	texturecords.y /= TEXTURE_SIZE;
-	sf::Image a = m_tetrominoTex[m_currentTex].copyToImage();
-	
-	for (float Y = 0; Y < 4; Y++)
+	for (int i = 0; i < TETROMINO_MATRIX_SIZE; i++)
 	{
-		for (float X = 0; X < 4; X++)
-		{
-			sf::Color pixcolor = a.getPixel(texturecords.x + (20 * X), texturecords.y + (20 * Y));
-			std::cout << static_cast<int>(pixcolor.b) << " ";
-		}
-		std::cout << std::endl;
+			if (cellY + TETROMINO_MATRIX_SIZE > m_gridSize.y || cellX + i > m_gridSize.x)
+			{
+				continue;
+			}
+			if (m_grid[cellY + TETROMINO_MATRIX_SIZE][cellX + i] != 0)
+			{
+				printTetrimino(cellY, cellX);
+				m_playerGravity = 1;
+				m_playerTetromino.setOrigin(savedOrigin);
+				return true;
+			}
 	}
-	*/
-	//m_playerTetromino.setOrigin(savedOrigin);
+	m_playerTetromino.setOrigin(savedOrigin);
+	return false;
 }
 
 bool Grid::swap(int Y,int X,const int axisY, const int axisX)

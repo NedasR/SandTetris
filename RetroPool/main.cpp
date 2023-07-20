@@ -27,12 +27,17 @@ int main()
             
         }
         //game.run();
-        if (clock.getElapsedTime() >= sf::milliseconds(120))
+        if (true/*clock.getElapsedTime() >= sf::milliseconds(20)*/)
         {
+            if (game.tetminoCollisionUpdate())
+            {
+                std::cout << "Collision happended" << std::endl;
+            }
             game.gravity();
+            game.playerGravity();
             clock.restart();
         }
-        game.playerGravity();
+        
 
         window.clear();
         game.drawGrid(window);
