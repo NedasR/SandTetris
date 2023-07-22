@@ -9,6 +9,7 @@ int main()
     Grid game;
     game.spawnTetromino();
     sf::Clock clock;
+    std::srand(static_cast<unsigned int>(std::time(0)));
     while (window.isOpen())
     {
         sf::Event event;
@@ -23,16 +24,21 @@ int main()
                 {
                     game.rotationUpdate();
                 }
+                if (event.key.code == sf::Keyboard::A)
+                {
+                    game.moveTetromnio(-1, 0);
+                }
+                if (event.key.code == sf::Keyboard::D)
+                {
+                    game.moveTetromnio(1, 0);
+                }
             }
             
         }
         //game.run();
-        if (true/*clock.getElapsedTime() >= sf::milliseconds(20)*/)
+        if (clock.getElapsedTime() >= sf::milliseconds(20))
         {
-            if (game.tetminoCollisionUpdate())
-            {
-                std::cout << "Collision happended" << std::endl;
-            }
+            game.tetminoCollisionUpdate();
             game.gravity();
             game.playerGravity();
             clock.restart();

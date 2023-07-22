@@ -59,7 +59,7 @@ void Grid::gravity()
 		{
 			if (!(swap(Y, X, 1, 0)))
 			{
-				std::srand(static_cast<unsigned int>(std::time(0)));
+				// srand breaks the gravity simulation for some unknown reason
 				switch (std::rand() % 2)
 				{
 					//movment to the left
@@ -133,8 +133,8 @@ void Grid::drawGrid(sf::RenderWindow& window)
 
 void Grid::spawnTetromino()
 {
-	m_playerTetromino.setTexture(m_tetrominoTex[3]);
-	m_currentTex = 3;
+	m_playerTetromino.setTexture(m_tetrominoTex[4]);
+	m_currentTex = 4;
 	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
 	m_playerTetromino.setPosition(sf::Vector2f(400, 30));
 	m_playerTetromino.setOrigin(40, 40);
@@ -214,9 +214,19 @@ void Grid::printTetrimino(const int& cellY, const int& cellX)
 	{
 		for (int x = 0; x < TETROMINO_MATRIX_SIZE; x++)
 		{
-			if (m_grid[y][x] == 0)
+			if (x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0)
 			{
-				m_grid[y + cellY][x + cellX] = m_copyMatrix[y][x];
+				continue;
+			}
+			if (m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] == 0)
+			{
+				if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0))
+				{
+					if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 > m_gridSize.x))
+					{
+						m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] = m_copyMatrix[y][x];
+					}
+				}
 			}
 		}
 	}
@@ -236,16 +246,28 @@ bool Grid::tetminoCollisionUpdate()
 			{
 				continue;
 			}
-			if (m_grid[cellY + TETROMINO_MATRIX_SIZE][cellX + i] != 0)
+			if (m_grid[cellY + TETROMINO_MATRIX_SIZE][cellX + i] != 0 || cellY + TETROMINO_MATRIX_SIZE >= 78)
 			{
 				printTetrimino(cellY, cellX);
 				m_playerGravity = 1;
 				m_playerTetromino.setOrigin(savedOrigin);
+				
 				return true;
 			}
 	}
 	m_playerTetromino.setOrigin(savedOrigin);
 	return false;
+}
+
+void Grid::moveTetromnio(const int& axisX, const int& axisY)
+{
+	sf::Vector2f player = m_playerTetromino.getPosition();
+	//player +1 and -1 is a bit of wigle room for the sidewalls that the rectangle can not rotate outside of the walls 
+	if ((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX > 0 +1 && (player.x - GRID_OFFSET_X) / SAND_SIZE + axisX < m_gridSize.x -1)
+	{
+		m_playerTetromino.setPosition(player.x + (axisX * SAND_SIZE), player.y + (axisY * SAND_SIZE));
+	}
+	
 }
 
 bool Grid::swap(int Y,int X,const int axisY, const int axisX)
