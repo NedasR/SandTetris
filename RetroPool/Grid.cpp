@@ -59,7 +59,6 @@ void Grid::gravity()
 		{
 			if (!(swap(Y, X, 1, 0)))
 			{
-				// srand breaks the gravity simulation for some unknown reason
 				switch (std::rand() % 2)
 				{
 					//movment to the left
@@ -294,4 +293,14 @@ bool Grid::swap(int Y,int X,const int axisY, const int axisX)
 		}
 	}
 	return false;
+}
+
+void Grid::softDrop()
+{
+	m_playerGravity++;
+}
+
+void Grid::hardDrop()
+{
+
 }

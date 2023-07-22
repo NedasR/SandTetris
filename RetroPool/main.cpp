@@ -32,11 +32,15 @@ int main()
                 {
                     game.moveTetromnio(1, 0);
                 }
+                if (event.key.code == sf::Keyboard::S)
+                {
+                    game.softDrop();
+                }
             }
             
         }
         //game.run();
-        if (clock.getElapsedTime() >= sf::milliseconds(20))
+        if (clock.getElapsedTime() >= sf::milliseconds(30))
         {
             game.tetminoCollisionUpdate();
             game.gravity();

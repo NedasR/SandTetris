@@ -50,4 +50,8 @@ public:
 	void moveTetromnio(const int& axisX, const int& axisY);
 
 	bool swap(int Y, int X,const int Xaxis,const int Yaxis);
+
+	void softDrop();
+	
+	void hardDrop();
  };
