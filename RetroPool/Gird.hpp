@@ -2,9 +2,9 @@
 #include <SFML/Graphics.hpp>
 #include<iostream>
 #define GRID_OFFSET_X 200
-#define SAND_SIZE 10.f
+#define SAND_SIZE 5.f
 #define TEXTURE_SIZE 80
-#define TETROMINO_MATRIX_SIZE 4
+#define TETROMINO_MATRIX_SIZE 16
 
 class Grid
 {
@@ -51,7 +51,8 @@ public:
 
 	bool swap(int Y, int X,const int Xaxis,const int Yaxis);
 
-	void softDrop();
+	void softAndHardDrop();
+
+	void rectangleBoundsFix();
 	
-	void hardDrop();
  };
