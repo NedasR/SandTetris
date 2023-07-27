@@ -5,8 +5,10 @@ int main()
 {
     
     sf::RenderWindow window(sf::VideoMode(800, 800), "coffie's game");
-    sf::RectangleShape sideWalls(sf::Vector2f(20, 800));
-    sideWalls.setFillColor(sf::Color(66, 65, 62));
+    sf::RectangleShape sideWallOne(sf::Vector2f(20, 800));
+    sideWallOne.setFillColor(sf::Color(66, 65, 62));
+    sf::RectangleShape sideWallTwo(sf::Vector2f(20, 800));
+    sideWallTwo.setFillColor(sf::Color(66, 65, 62));
     window.setFramerateLimit(60);
     Grid game;
     game.spawnTetromino();
@@ -28,11 +30,11 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::A)
                 {
-                    game.moveTetromnio(-1, 0);
+                    game.moveTetromnio(-1, 0, sideWallTwo);
                 }
                 if (event.key.code == sf::Keyboard::D)
                 {
-                    game.moveTetromnio(1, 0);
+                    game.moveTetromnio(1, 0, sideWallOne);
                 }
                 if (event.key.code == sf::Keyboard::S)
                 {
@@ -54,10 +56,10 @@ int main()
 
         window.clear();
         game.drawGrid(window);
-        sideWalls.setPosition(200 - sideWalls.getSize().x, 0);
-        window.draw(sideWalls);
-        sideWalls.setPosition(200 + 400-5, 0);
-        window.draw(sideWalls);
+        sideWallTwo.setPosition(200 - sideWallTwo.getSize().x, 0);
+        window.draw(sideWallTwo);
+        sideWallOne.setPosition(200 + 400-5, 0);
+        window.draw(sideWallOne);
         window.display();
     }
 

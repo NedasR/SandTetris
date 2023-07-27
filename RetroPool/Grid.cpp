@@ -239,7 +239,6 @@ bool Grid::tetminoCollisionUpdate()
 	m_playerTetromino.setOrigin(sf::Vector2f(0, 0));
 	int cellY = m_playerTetromino.getPosition().y / SAND_SIZE;
 	int cellX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
-
 	for (int i = 0; i < TETROMINO_MATRIX_SIZE; i++)
 	{
 			if (cellY + TETROMINO_MATRIX_SIZE > m_gridSize.y || cellX + i > m_gridSize.x)
@@ -259,28 +258,55 @@ bool Grid::tetminoCollisionUpdate()
 	return false;
 }
 
-void Grid::moveTetromnio(const int& axisX, const int& axisY)
+void Grid::moveTetromnio(const int& axisX, const int& axisY, sf::RectangleShape& collider)
 {
 	sf::Vector2f player = m_playerTetromino.getPosition();
 	//player +1 and -1 is a bit of wigle room for the sidewalls that the rectangle can not rotate outside of the walls 
-	if ((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX > 0 + 3 && (player.x - GRID_OFFSET_X) / SAND_SIZE + axisX < m_gridSize.x - 3)
+	//if ((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX > 0 + 3 && (player.x - GRID_OFFSET_X) / SAND_SIZE + axisX < m_gridSize.x - 3)
+	/*
+	if (((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX - 1 < m_gridSize.x - TETROMINO_MATRIX_SIZE / 2))
 	{
 		m_playerTetromino.setPosition(player.x + (axisX * SAND_SIZE), player.y + (axisY * SAND_SIZE));
 	}
-	/*
-	int mGridX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
-	int counter = 0;;
-	for (int x = 0; x < TETROMINO_MATRIX_SIZE / 2; x++)
+	*/
+	int count = 0;
+	if (axisX > 0)
 	{
-		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2) - 1][(TETROMINO_MATRIX_SIZE / 2 + x)] != 0 && mGridX + x + 1 > m_gridSize.x)
+		for (int i = TETROMINO_MATRIX_SIZE / 2; i < TETROMINO_MATRIX_SIZE; i++)
 		{
-			std::cout << mGridX + x;
-			counter++;
-			std::cout << "runs";
+			if (m_copyMatrix[7][i] != 0 || m_copyMatrix[9][i] != 0)
+			{
+				count++;
+			}
+		}
+		if (!(collider.getGlobalBounds().contains(m_playerTetromino.getPosition().x + count * SAND_SIZE, m_playerTetromino.getPosition().y)))
+		{
+			m_playerTetromino.setPosition(player.x + (axisX * SAND_SIZE), player.y + (axisY * SAND_SIZE));
+		}
+		else if (collider.getGlobalBounds().contains(m_playerTetromino.getPosition().x + count * SAND_SIZE, m_playerTetromino.getPosition().y))
+		{
+			m_playerTetromino.setPosition(player.x - SAND_SIZE, player.y);
 		}
 	}
-	m_playerTetromino.setPosition(m_playerTetromino.getPosition().x - (counter * SAND_SIZE), m_playerTetromino.getPosition().y);
-	*/
+
+	if (axisX < 0)
+	{
+		for (int i = TETROMINO_MATRIX_SIZE / 2; i > 0; i--)
+		{
+			if (m_copyMatrix[7][i] != 0 || m_copyMatrix[9][i] != 0)
+			{
+				count++;
+			}
+		}
+		if (!(collider.getGlobalBounds().contains(m_playerTetromino.getPosition().x - count * SAND_SIZE, m_playerTetromino.getPosition().y)))
+		{
+			m_playerTetromino.setPosition(player.x + (axisX * SAND_SIZE), player.y + (axisY * SAND_SIZE));
+		}
+		else if (collider.getGlobalBounds().contains(m_playerTetromino.getPosition().x - count * SAND_SIZE, m_playerTetromino.getPosition().y))
+		{
+			m_playerTetromino.setPosition(player.x + SAND_SIZE+5, player.y);
+		}
+	}
 }
 
 bool Grid::swap(int Y,int X,const int axisY, const int axisX)
@@ -316,26 +342,33 @@ void Grid::softAndHardDrop()
 
 void Grid::rectangleBoundsFix()
 {
+
+	
 	int mGridX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
 	int counter = 0;;
 	for (int x = 0; x < TETROMINO_MATRIX_SIZE / 2; x++)
 	{
-		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2) - 1][(TETROMINO_MATRIX_SIZE / 2 + x)] != 0 &&  mGridX + x+1 > m_gridSize.x)
+		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2) - 1][(TETROMINO_MATRIX_SIZE / 2 + x)]  &&  mGridX + x+1 > m_gridSize.x)
 		{
-			std::cout << mGridX + x;
 			counter++;
-			std::cout << "runs";
+		}
+		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2)][(TETROMINO_MATRIX_SIZE / 2 + x)] && mGridX + x + 1 > m_gridSize.x)
+		{
+			counter++;
 		}
 	}
 	m_playerTetromino.setPosition(m_playerTetromino.getPosition().x - (counter * SAND_SIZE), m_playerTetromino.getPosition().y);
 	counter = 0;
-	for (int x = TETROMINO_MATRIX_SIZE / 2; x > 0; x--)
+
+	for (int x = TETROMINO_MATRIX_SIZE / 2; x >= 0; x--)
 	{
-		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2)][x-1] != 0 && mGridX - x < 0)
+		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2)][x-1]  && mGridX - x < 0)
 		{
-			std::cout << mGridX + x;
 			counter++;
-			std::cout << "runs";
+		}
+		if (m_copyMatrix[(TETROMINO_MATRIX_SIZE / 2)-1][x - 1]  && mGridX - x < 0)
+		{
+			counter++;
 		}
 	}
 	m_playerTetromino.setPosition(m_playerTetromino.getPosition().x + (counter * SAND_SIZE), m_playerTetromino.getPosition().y);

@@ -47,7 +47,7 @@ public:
 
 	bool tetminoCollisionUpdate();
 
-	void moveTetromnio(const int& axisX, const int& axisY);
+	void moveTetromnio(const int& axisX, const int& axisY, sf::RectangleShape& collider);
 
 	bool swap(int Y, int X,const int Xaxis,const int Yaxis);
 
