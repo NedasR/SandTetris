@@ -9,7 +9,8 @@
 class Grid
 {
 private:
-	sf::Texture m_tetrominoTex[5];
+	sf::Texture m_tetrominoTex[6];
+	sf::Color m_tetrominoColor[6];
 	std::vector<std::vector<int>> m_grid;
 	sf::RectangleShape m_rectangle;
 	sf::Sprite m_playerTetromino;
@@ -27,7 +28,7 @@ public:
 
 	void loadTetriminoTextures();
 
-	void run();
+	void loadTetriminoColors();
 
 	void gridSize(const int& sizeX, const int& sizeY);
 
@@ -43,7 +44,7 @@ public:
 
 	void printTetrimino(const int& cellX, const int& cellY);
 
-	void spawnTetromino();
+	void spawnTetromino(const int& tetrminoType, const int& tetrmnioColor);
 
 	bool tetminoCollisionUpdate();
 
@@ -54,5 +55,9 @@ public:
 	void softAndHardDrop();
 
 	void rectangleBoundsFix();
+
+	void randomTetromino();
+
+	void wipeCopyMatrix();
 	
  };

@@ -11,7 +11,7 @@ int main()
     sideWallTwo.setFillColor(sf::Color(66, 65, 62));
     window.setFramerateLimit(60);
     Grid game;
-    game.spawnTetromino();
+    game.spawnTetromino(4,2);
     sf::Clock clock;
     std::srand(static_cast<unsigned int>(std::time(0)));
     while (window.isOpen())
@@ -52,7 +52,6 @@ int main()
             game.playerGravity();
             clock.restart();
         }
-        
 
         window.clear();
         game.drawGrid(window);

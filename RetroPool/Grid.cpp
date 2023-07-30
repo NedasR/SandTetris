@@ -2,7 +2,11 @@
 
 Grid::Grid()
 {
+	m_playerTetromino.setOrigin(40, 40);
+	m_playerTetromino.setScale(0.065 * TETROMINO_MATRIX_SIZE, 0.065 * TETROMINO_MATRIX_SIZE);
+	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
 	loadTetriminoTextures();
+	loadTetriminoColors();
 	int gridOffsetX = GRID_OFFSET_X;
 	int sandSize = SAND_SIZE;
 	m_playerGravity = 0;
@@ -24,19 +28,23 @@ Grid::Grid()
 void Grid::loadTetriminoTextures()
 {
 	
-	if (!(m_tetrominoTex[0].loadFromFile("assets/Ltetromino.png")     &&
-		  m_tetrominoTex[1].loadFromFile("assets/Skewtetromino.png")  &&
-		  m_tetrominoTex[2].loadFromFile("assets/Squaretetromin.png") &&
-		  m_tetrominoTex[3].loadFromFile("assets/Stetromino.png")     &&
-		  m_tetrominoTex[4].loadFromFile("assets/Ttetromino.png")))
+	if (!(m_tetrominoTex[1].loadFromFile("assets/Ltetromino.png")     &&
+		  m_tetrominoTex[2].loadFromFile("assets/Skewtetromino.png")  &&
+		  m_tetrominoTex[3].loadFromFile("assets/Squaretetromin.png") &&
+		  m_tetrominoTex[4].loadFromFile("assets/Stetromino.png")     &&
+		  m_tetrominoTex[5].loadFromFile("assets/Ttetromino.png")))
 		{
 		std::cout << "TetriminoTextures failed to load one or all";
 		}
 }
 
-void Grid::run()
+void Grid::loadTetriminoColors()
 {
-	gravity();
+	m_tetrominoColor[1] = sf::Color(245, 17, 55);
+	m_tetrominoColor[2] = sf::Color(62, 123, 222);
+	m_tetrominoColor[3] = sf::Color(212, 30, 163);
+	m_tetrominoColor[4] = sf::Color(20, 168, 25);
+	m_tetrominoColor[5] = sf::Color(226, 245, 61);
 }
 
 void Grid::gridSize(const int& sizeX,const int& sizeY)
@@ -100,6 +108,8 @@ void Grid::playerGravity()
 	if (m_playerGravity >= m_gridSize.y)
 	{
 		m_playerGravity = 1;
+		randomTetromino();
+		std::cout << "random runs";
 	}
 
 }
@@ -114,12 +124,27 @@ void Grid::drawGrid(sf::RenderWindow& window)
 			{
 				if (m_grid[Y][X] == 1)
 				{
-					m_rectangle.setFillColor(sf::Color::Red);
+					m_rectangle.setFillColor(m_tetrominoColor[1]);
 					m_rectangle.setPosition(sf::Vector2f((X * SAND_SIZE)+200,Y * SAND_SIZE));
-				} else
+				}
 				if (m_grid[Y][X] == 2)
 				{
-					m_rectangle.setFillColor(sf::Color::Blue);
+					m_rectangle.setFillColor(m_tetrominoColor[2]);
+					m_rectangle.setPosition(sf::Vector2f((X * SAND_SIZE) + 200, Y * SAND_SIZE));
+				}
+				if (m_grid[Y][X] == 3)
+				{
+					m_rectangle.setFillColor(m_tetrominoColor[3]);
+					m_rectangle.setPosition(sf::Vector2f((X * SAND_SIZE) + 200, Y * SAND_SIZE));
+				}
+				if (m_grid[Y][X] == 4)
+				{
+					m_rectangle.setFillColor(m_tetrominoColor[4]);
+					m_rectangle.setPosition(sf::Vector2f((X * SAND_SIZE) + 200, Y * SAND_SIZE));
+				}
+				if (m_grid[Y][X] == 5)
+				{
+					m_rectangle.setFillColor(m_tetrominoColor[5]);
 					m_rectangle.setPosition(sf::Vector2f((X * SAND_SIZE) + 200, Y * SAND_SIZE));
 				}
 
@@ -130,25 +155,24 @@ void Grid::drawGrid(sf::RenderWindow& window)
 	window.draw(m_playerTetromino);
 }
 
-void Grid::spawnTetromino()
+void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
 {
-	m_playerTetromino.setTexture(m_tetrominoTex[3]);
-	m_currentTex = 3;
-	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
+	TX = 0;
+	m_playerTetromino.setRotation(0);
+	m_playerTetromino.setTexture(m_tetrominoTex[tetrminoType]);
+	m_currentTex = tetrminoType;
+	m_playerTetromino.setColor(m_tetrominoColor[tetrmnioColor]);
 	m_playerTetromino.setPosition(sf::Vector2f(400, 30));
-	m_playerTetromino.setOrigin(40, 40);
-	m_playerTetromino.setColor(sf::Color::Blue);
-	m_playerTetromino.setScale(0.065 * TETROMINO_MATRIX_SIZE, 0.065 * TETROMINO_MATRIX_SIZE);
-	sf::Image a = m_tetrominoTex[m_currentTex].copyToImage();
-	
+	sf::Image shapeMatrix = m_tetrominoTex[m_currentTex].copyToImage();
+	wipeCopyMatrix();
 	for (int Y = 0; Y < TETROMINO_MATRIX_SIZE; Y++)
 	{
 		for (int X = 0; X < TETROMINO_MATRIX_SIZE; X++)
 		{
-			sf::Color pixcolor = a.getPixel(80 / TETROMINO_MATRIX_SIZE * X, 80 / TETROMINO_MATRIX_SIZE * Y);
+			sf::Color pixcolor = shapeMatrix.getPixel(80 / TETROMINO_MATRIX_SIZE * X, 80 / TETROMINO_MATRIX_SIZE * Y);
 			if (static_cast<int>(pixcolor.b) > 0)
 			{
-				m_copyMatrix[Y][X] = 2;
+				m_copyMatrix[Y][X] = tetrmnioColor;
 				continue;
 			}
 			m_copyMatrix[Y][X] = 0;
@@ -156,14 +180,16 @@ void Grid::spawnTetromino()
 		std::cout << std::endl;
 	}
 
-	for (int Y = 0; Y < 4; Y++)
+	/*
+	for (int Y = 0; Y < 16; Y++)
 	{
-		for (int X = 0; X < 4; X++)
+		for (int X = 0; X < 16; X++)
 		{
 			std::cout << m_copyMatrix[Y][X] << " ";
 		}
 		std::cout << std::endl;
 	}
+	*/
 }
 
 void Grid::rotationUpdate()
@@ -249,6 +275,7 @@ bool Grid::tetminoCollisionUpdate()
 			{
 				printTetrimino(cellY, cellX);
 				m_playerGravity = 1;
+				randomTetromino();
 				m_playerTetromino.setOrigin(savedOrigin);
 				
 				return true;
@@ -261,15 +288,8 @@ bool Grid::tetminoCollisionUpdate()
 void Grid::moveTetromnio(const int& axisX, const int& axisY, sf::RectangleShape& collider)
 {
 	sf::Vector2f player = m_playerTetromino.getPosition();
-	//player +1 and -1 is a bit of wigle room for the sidewalls that the rectangle can not rotate outside of the walls 
-	//if ((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX > 0 + 3 && (player.x - GRID_OFFSET_X) / SAND_SIZE + axisX < m_gridSize.x - 3)
-	/*
-	if (((player.x - GRID_OFFSET_X) / SAND_SIZE + axisX - 1 < m_gridSize.x - TETROMINO_MATRIX_SIZE / 2))
-	{
-		m_playerTetromino.setPosition(player.x + (axisX * SAND_SIZE), player.y + (axisY * SAND_SIZE));
-	}
-	*/
 	int count = 0;
+	//right wall offset calculations
 	if (axisX > 0)
 	{
 		for (int i = TETROMINO_MATRIX_SIZE / 2; i < TETROMINO_MATRIX_SIZE; i++)
@@ -289,6 +309,7 @@ void Grid::moveTetromnio(const int& axisX, const int& axisY, sf::RectangleShape&
 		}
 	}
 
+	//left wall offset calculations
 	if (axisX < 0)
 	{
 		for (int i = TETROMINO_MATRIX_SIZE / 2; i > 0; i--)
@@ -372,4 +393,45 @@ void Grid::rectangleBoundsFix()
 		}
 	}
 	m_playerTetromino.setPosition(m_playerTetromino.getPosition().x + (counter * SAND_SIZE), m_playerTetromino.getPosition().y);
+}
+
+void Grid::randomTetromino()
+{
+	spawnTetromino(std::rand() % 5 +1, std::rand() % 5+1);
+	/*
+	switch (std::rand() % 5)
+	{
+		case (0) :
+		{
+			spawnTetromino(0, 2);
+		}
+		case (1):
+		{
+			spawnTetromino(1, 2);
+		}
+		case (2):
+		{
+			spawnTetromino(2, 2);
+		}
+		case (3):
+		{
+			spawnTetromino(3, 2);
+		}
+		case (4):
+		{
+			spawnTetromino(4, 2);
+		}
+	}
+	*/
+}
+
+void Grid::wipeCopyMatrix()
+{
+	for (int Y = 0; Y < TETROMINO_MATRIX_SIZE; Y++)
+	{
+		for (int X = 0; X < TETROMINO_MATRIX_SIZE; X++)
+		{
+			m_copyMatrix[Y][X] = 0;
+		}
+	}
 }
