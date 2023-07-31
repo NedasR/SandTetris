@@ -13,6 +13,7 @@ int main()
     Grid game;
     game.spawnTetromino(4,2);
     sf::Clock clock;
+    sf::Clock clock2;
     std::srand(static_cast<unsigned int>(std::time(0)));
     while (window.isOpen())
     {
@@ -30,11 +31,11 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::A)
                 {
-                    game.moveTetromnio(-1, 0, sideWallTwo);
+                        game.moveTetromnio(-1, 0, sideWallTwo);
                 }
                 if (event.key.code == sf::Keyboard::D)
                 {
-                    game.moveTetromnio(1, 0, sideWallOne);
+                        game.moveTetromnio(1, 0, sideWallOne);
                 }
                 if (event.key.code == sf::Keyboard::S)
                 {
@@ -52,6 +53,13 @@ int main()
             game.playerGravity();
             clock.restart();
         }
+        
+        if (clock2.getElapsedTime() >= sf::milliseconds(240))
+        {
+            game.connectionDetection();
+            clock2.restart();
+        }
+        game.eliminateConnectedCells();
 
         window.clear();
         game.drawGrid(window);

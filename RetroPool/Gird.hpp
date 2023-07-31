@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include<iostream>
+#include <queue>
 #define GRID_OFFSET_X 200
 #define SAND_SIZE 5.f
 #define TEXTURE_SIZE 80
@@ -10,8 +11,11 @@ class Grid
 {
 private:
 	sf::Texture m_tetrominoTex[6];
-	sf::Color m_tetrominoColor[6];
+	sf::Color m_tetrominoColor[7];
 	std::vector<std::vector<int>> m_grid;
+	bool m_gridVisited[161][80];
+	std::vector<sf::Vector2i> m_savedcells;
+	std::vector<sf::Vector2i> m_cellsReadyTodie;
 	sf::RectangleShape m_rectangle;
 	sf::Sprite m_playerTetromino;
 	sf::Texture m_texture;
@@ -20,10 +24,18 @@ private:
 	int m_playerGravity;
 	int m_currentTex;
 	int TX;
-
-
+	bool m_erase;
+	bool m_pause;
+	int m_eliminationIterator;
+	sf::Vector2i current;
+	sf::Vector2i left;
+	sf::Vector2i down;
+	sf::Vector2i right;
+	sf::Vector2i up;
+	std::queue<sf::Vector2i> m_queue;
+	int lastColor;
+	int currentColor;
 public:
-
 	Grid();
 
 	void loadTetriminoTextures();
@@ -59,5 +71,12 @@ public:
 	void randomTetromino();
 
 	void wipeCopyMatrix();
+
+	void resetVistedMap();
+
+	void connectionDetection();
+
+	void eraseConnectedCell(bool& eraseOn);
 	
+	void eliminateConnectedCells();
  };
