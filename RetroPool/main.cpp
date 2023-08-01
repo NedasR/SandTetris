@@ -12,6 +12,7 @@ int main()
     window.setFramerateLimit(60);
     Grid game;
     game.spawnTetromino(4,2);
+    game.clickButton(sf::Vector2f(120, 60), sf::Vector2f(595 + (205 - 120+40), 600));
     sf::Clock clock;
     sf::Clock clock2;
     std::srand(static_cast<unsigned int>(std::time(0)));
@@ -41,6 +42,10 @@ int main()
                 {
                     // moves one cell down if pressed and if held dose hard drop
                     game.softAndHardDrop();
+                }
+                if (event.key.code == sf::Keyboard::P)
+                {
+                    game.pauseButton();
                 }
             }
             

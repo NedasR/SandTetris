@@ -17,6 +17,7 @@ private:
 	std::vector<sf::Vector2i> m_savedcells;
 	std::vector<sf::Vector2i> m_cellsReadyTodie;
 	sf::RectangleShape m_rectangle;
+	sf::RectangleShape m_pauseButtonRect;
 	sf::Sprite m_playerTetromino;
 	sf::Texture m_texture;
 	sf::Vector2i m_gridSize;
@@ -25,6 +26,7 @@ private:
 	int m_currentTex;
 	int TX;
 	bool m_erase;
+	bool m_eraseOn;
 	bool m_pause;
 	int m_eliminationIterator;
 	sf::Vector2i current;
@@ -79,4 +81,12 @@ public:
 	void eraseConnectedCell(bool& eraseOn);
 	
 	void eliminateConnectedCells();
+
+	void pauseGame();
+
+	void unpauseGame();
+
+	void pauseButton();
+
+	void clickButton(const sf::Vector2f& size, sf::Vector2f pos);
  };

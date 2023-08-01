@@ -3,6 +3,7 @@
 Grid::Grid()
 {
 	m_eliminationIterator = 0;
+	m_eraseOn = false;
 	m_pause = false;
 	lastColor = 0;
 	currentColor = 0;
@@ -23,7 +24,7 @@ Grid::Grid()
 		{
 			m_grid[Y][X] = 0;
 			m_gridVisited[Y][X] = false;
-			if (X < m_gridSize.x && Y == 60)
+			if (X < m_gridSize.x && Y >= 60 && Y <= 70)
 			{
 				m_grid[Y][X] = 1;
 			}
@@ -172,6 +173,7 @@ void Grid::drawGrid(sf::RenderWindow& window)
 		}
 	}
 	window.draw(m_playerTetromino);
+	window.draw(m_pauseButtonRect);
 }
 
 void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
@@ -541,7 +543,7 @@ void Grid::connectionDetection()
 			if (current.x >= m_gridSize.x - 1)
 			{
 				m_erase = true;
-				std::cout << m_erase << "true" << std::endl;
+				m_eraseOn = true;
 			}
 			m_savedcells.push_back(current);
 			count++;
@@ -568,8 +570,8 @@ void Grid::eraseConnectedCell(bool& eraseOn)
 			m_grid[m_savedcells[i].y][m_savedcells[i].x] = 6;
 			m_cellsReadyTodie.push_back(m_savedcells[i]);
 		}
-		m_erase = false;
-		m_pause = true;
+		eraseOn = false;
+		pauseGame();
 	}
 }
 
@@ -588,7 +590,41 @@ void Grid::eliminateConnectedCells()
 			}
 			m_eliminationIterator = 0;
 			m_cellsReadyTodie.clear();
-			m_pause = false;
+			unpauseGame();
+			m_eraseOn = false;
 		}
 	}
 }
+
+void Grid::pauseGame()
+{
+	m_pause = true;
+}
+
+
+void Grid::unpauseGame()
+{
+	m_pause = false;
+}
+
+void Grid::pauseButton()
+{
+	if (!(m_eraseOn))
+	{
+		if (!(m_pause))
+		{
+			pauseGame();
+		}
+		else
+		{
+			unpauseGame();
+		}
+	}
+}
+
+void Grid::clickButton(const sf::Vector2f& size, sf::Vector2f pos)
+{
+	m_pauseButtonRect.setPosition(pos);
+	m_pauseButtonRect.setSize(size);
+}
+
