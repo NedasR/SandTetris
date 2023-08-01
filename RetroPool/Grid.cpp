@@ -13,6 +13,15 @@ Grid::Grid()
 	m_playerTetromino.setTextureRect(sf::IntRect(0, 0, 80, 80));
 	loadTetriminoTextures();
 	loadTetriminoColors();
+	m_buttonTex.loadFromFile("assets/button.png");
+	m_quitbButtonTex.loadFromFile("assets/Quitbutton.png");
+	m_fontForAllTexs.loadFromFile("assets/arial.ttf");
+	m_pausedText.setString("Paused");
+	m_pausedText.setCharacterSize(46);
+	m_pausedText.setFont(m_fontForAllTexs);
+	m_pausedText.setOutlineColor(sf::Color(77, 75, 71));
+	m_pausedText.setOutlineThickness(6);
+	m_pausedText.setPosition((400 - m_pausedText.getGlobalBounds().width / 2), 100);
 	int gridOffsetX = GRID_OFFSET_X;
 	int sandSize = SAND_SIZE;
 	m_playerGravity = 0;
@@ -113,10 +122,12 @@ void Grid::playerGravity()
 {
 	if (!(m_pause))
 	{
+		/*
 		if (m_playerGravity == 0)
 		{
 			m_playerGravity = m_playerTetromino.getPosition().y / SAND_SIZE;
 		}
+		*/
 		m_playerTetromino.setPosition(m_playerTetromino.getPosition().x, m_playerGravity * SAND_SIZE);
 		m_playerGravity++;
 		if (m_playerGravity >= m_gridSize.y)
@@ -174,6 +185,11 @@ void Grid::drawGrid(sf::RenderWindow& window)
 	}
 	window.draw(m_playerTetromino);
 	window.draw(m_pauseButtonRect);
+	window.draw(m_quitButtonRect);
+	if (m_pause && !m_eraseOn)
+	{
+		window.draw(m_pausedText);
+	}
 }
 
 void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
@@ -183,7 +199,8 @@ void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
 	m_playerTetromino.setTexture(m_tetrominoTex[tetrminoType]);
 	m_currentTex = tetrminoType;
 	m_playerTetromino.setColor(m_tetrominoColor[tetrmnioColor]);
-	m_playerTetromino.setPosition(sf::Vector2f(400, 30));
+	m_playerTetromino.setPosition(sf::Vector2f(400, -160));
+	m_playerGravity = m_playerTetromino.getPosition().y / SAND_SIZE;
 	sf::Image shapeMatrix = m_tetrominoTex[m_currentTex].copyToImage();
 	wipeCopyMatrix();
 	for (int Y = 0; Y < TETROMINO_MATRIX_SIZE; Y++)
@@ -280,28 +297,32 @@ void Grid::printTetrimino(const int& cellY, const int& cellX)
 
 bool Grid::tetminoCollisionUpdate()
 {
-
-	sf::Vector2f savedOrigin(m_playerTetromino.getOrigin());
-	m_playerTetromino.setOrigin(sf::Vector2f(0, 0));
-	int cellY = m_playerTetromino.getPosition().y / SAND_SIZE;
-	int cellX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
-	for (int i = 0; i < TETROMINO_MATRIX_SIZE; i++)
+	if (!(m_playerTetromino.getPosition().y < -80))
 	{
+		sf::Vector2f savedOrigin(m_playerTetromino.getOrigin());
+		m_playerTetromino.setOrigin(sf::Vector2f(0, 0));
+		int cellY = m_playerTetromino.getPosition().y / SAND_SIZE;
+		int cellX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
+		std::cout << cellY << " cellY" << std::endl;
+		for (int i = 0; i < TETROMINO_MATRIX_SIZE; i++)
+		{
 			if (cellY + TETROMINO_MATRIX_SIZE > m_gridSize.y || cellX + i > m_gridSize.x)
 			{
 				continue;
 			}
-			if (m_grid[cellY + TETROMINO_MATRIX_SIZE][cellX - 2 + i] != 0 || cellY + TETROMINO_MATRIX_SIZE >= m_gridSize.y-2)
+			if (m_grid[cellY + TETROMINO_MATRIX_SIZE][cellX - 2 + i] != 0 || cellY + TETROMINO_MATRIX_SIZE >= m_gridSize.y - 2)
 			{
 				printTetrimino(cellY, cellX);
 				m_playerGravity = 1;
 				randomTetromino();
 				m_playerTetromino.setOrigin(savedOrigin);
-				
+
 				return true;
 			}
+		}
+		m_playerTetromino.setOrigin(savedOrigin);
+		return false;
 	}
-	m_playerTetromino.setOrigin(savedOrigin);
 	return false;
 }
 
@@ -622,9 +643,34 @@ void Grid::pauseButton()
 	}
 }
 
-void Grid::clickButton(const sf::Vector2f& size, sf::Vector2f pos)
+void Grid::makeClickablePauseButton(const sf::Vector2f& size, sf::Vector2f pos)
 {
 	m_pauseButtonRect.setPosition(pos);
 	m_pauseButtonRect.setSize(size);
+	m_pauseButtonRect.setTexture(&m_buttonTex);
+}
+
+void Grid::makeClickableQuitButton(const sf::Vector2f& size, sf::Vector2f pos)
+{
+	m_quitButtonRect.setPosition(pos);
+	m_quitButtonRect.setSize(size);
+	m_quitButtonRect.setTexture(&m_quitbButtonTex);
+}
+
+void Grid::clickButton(const sf::Vector2f& mousePos)
+{
+
+	if (m_pauseButtonRect.getGlobalBounds().contains(mousePos))
+	{
+		pauseButton();
+	}
+}
+
+void Grid::clickQuitButton(const sf::Vector2f& mousePos,sf::RenderWindow& window)
+{
+	if (m_quitButtonRect.getGlobalBounds().contains(mousePos))
+	{
+		window.close();
+	}
 }
 

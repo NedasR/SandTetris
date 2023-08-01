@@ -12,18 +12,33 @@ int main()
     window.setFramerateLimit(60);
     Grid game;
     game.spawnTetromino(4,2);
-    game.clickButton(sf::Vector2f(120, 60), sf::Vector2f(595 + (205 - 120+40), 600));
+    game.makeClickablePauseButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 600));
+    game.makeClickableQuitButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 680));
     sf::Clock clock;
     sf::Clock clock2;
     std::srand(static_cast<unsigned int>(std::time(0)));
+    sf::Event event;
+    sf::Clock keybordspeed;
     while (window.isOpen())
     {
-        sf::Event event;
+
         while (window.pollEvent(event))
         {
             if (event.type == event.Closed) {
                 window.close();
             }
+
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                if (event.key.code == sf::Mouse::Left)
+                {
+                    game.clickButton(sf::Vector2f(sf::Mouse::getPosition(window)));
+
+                    game.clickQuitButton(sf::Vector2f(sf::Mouse::getPosition(window)), window);
+                }
+            }
+
+
             if (event.type == sf::Event::KeyPressed)
             {
                 if (event.key.code == sf::Keyboard::R)
@@ -32,16 +47,16 @@ int main()
                 }
                 if (event.key.code == sf::Keyboard::A)
                 {
-                        game.moveTetromnio(-1, 0, sideWallTwo);
+                       //game.moveTetromnio(-1, 0, sideWallTwo);
                 }
                 if (event.key.code == sf::Keyboard::D)
                 {
-                        game.moveTetromnio(1, 0, sideWallOne);
+                        //game.moveTetromnio(1, 0, sideWallOne);
                 }
                 if (event.key.code == sf::Keyboard::S)
                 {
                     // moves one cell down if pressed and if held dose hard drop
-                    game.softAndHardDrop();
+                   // game.softAndHardDrop();
                 }
                 if (event.key.code == sf::Keyboard::P)
                 {
@@ -50,6 +65,25 @@ int main()
             }
             
         }
+
+        if (keybordspeed.getElapsedTime() >= sf::milliseconds(24))
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                game.moveTetromnio(-1, 0, sideWallTwo);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                game.moveTetromnio(1, 0, sideWallOne);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            {
+                game.softAndHardDrop();
+            }
+            keybordspeed.restart();
+        }
+
+
         //game.run();
         if (clock.getElapsedTime() >= sf::milliseconds(30))
         {

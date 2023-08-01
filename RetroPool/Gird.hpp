@@ -12,12 +12,17 @@ class Grid
 private:
 	sf::Texture m_tetrominoTex[6];
 	sf::Color m_tetrominoColor[7];
+	sf::Texture m_buttonTex;
+	sf::Texture m_quitbButtonTex;
 	std::vector<std::vector<int>> m_grid;
+	sf::Text m_pausedText;
+	sf::Font m_fontForAllTexs;
 	bool m_gridVisited[161][80];
 	std::vector<sf::Vector2i> m_savedcells;
 	std::vector<sf::Vector2i> m_cellsReadyTodie;
 	sf::RectangleShape m_rectangle;
 	sf::RectangleShape m_pauseButtonRect;
+	sf::RectangleShape m_quitButtonRect;
 	sf::Sprite m_playerTetromino;
 	sf::Texture m_texture;
 	sf::Vector2i m_gridSize;
@@ -88,5 +93,11 @@ public:
 
 	void pauseButton();
 
-	void clickButton(const sf::Vector2f& size, sf::Vector2f pos);
+	void makeClickablePauseButton(const sf::Vector2f& size, sf::Vector2f pos);
+
+	void makeClickableQuitButton(const sf::Vector2f& size, sf::Vector2f pos);
+
+	void clickButton(const sf::Vector2f& mousePos);
+
+	void clickQuitButton(const sf::Vector2f& mousePos, sf::RenderWindow& window);
  };
