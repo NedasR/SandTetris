@@ -2,6 +2,8 @@
 
 Grid::Grid()
 {
+	m_currentScore = 0;
+	m_scoreCounter = 0;
 	m_eliminationIterator = 0;
 	m_eraseOn = false;
 	m_pause = false;
@@ -16,9 +18,17 @@ Grid::Grid()
 	m_buttonTex.loadFromFile("assets/button.png");
 	m_quitbButtonTex.loadFromFile("assets/Quitbutton.png");
 	m_fontForAllTexs.loadFromFile("assets/arial.ttf");
+	PixelLikeFont.loadFromFile("assets/rainyhearts.ttf");
 	m_pausedText.setString("Paused");
 	m_pausedText.setCharacterSize(46);
 	m_pausedText.setFont(m_fontForAllTexs);
+	m_scoreText.setFont(PixelLikeFont);
+	m_scoreLetters.setFont(PixelLikeFont);
+	m_scoreLetters.setCharacterSize(30);
+	m_scoreLetters.setString("SCORE");
+	m_scoreLetters.setPosition(85 - m_scoreLetters.getGlobalBounds().width/ 2, 90);
+	m_scoreText.setCharacterSize(70);
+	m_scoreText.setFillColor(sf::Color(176, 167, 167));
 	m_pausedText.setOutlineColor(sf::Color(77, 75, 71));
 	m_pausedText.setOutlineThickness(6);
 	m_pausedText.setPosition((400 - m_pausedText.getGlobalBounds().width / 2), 100);
@@ -33,9 +43,9 @@ Grid::Grid()
 		{
 			m_grid[Y][X] = 0;
 			m_gridVisited[Y][X] = false;
-			if (X < m_gridSize.x && Y >= 60 && Y <= 70)
+			if (X < m_gridSize.x && Y >= 60 && Y >= 70)
 			{
-				m_grid[Y][X] = 1;
+				m_grid[Y][X] = 4;
 			}
 		}
 	}
@@ -122,12 +132,6 @@ void Grid::playerGravity()
 {
 	if (!(m_pause))
 	{
-		/*
-		if (m_playerGravity == 0)
-		{
-			m_playerGravity = m_playerTetromino.getPosition().y / SAND_SIZE;
-		}
-		*/
 		m_playerTetromino.setPosition(m_playerTetromino.getPosition().x, m_playerGravity * SAND_SIZE);
 		m_playerGravity++;
 		if (m_playerGravity >= m_gridSize.y)
@@ -190,6 +194,8 @@ void Grid::drawGrid(sf::RenderWindow& window)
 	{
 		window.draw(m_pausedText);
 	}
+	window.draw(m_scoreText);
+	window.draw(m_scoreLetters);
 }
 
 void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
@@ -273,21 +279,24 @@ void Grid::tetriminoOrientationUpdate()
 
 void Grid::printTetrimino(const int& cellY, const int& cellX)
 {
-	for (int y = 0; y < TETROMINO_MATRIX_SIZE; y++)
+	if (cellY > 0)
 	{
-		for (int x = 0; x < TETROMINO_MATRIX_SIZE; x++)
+		for (int y = 0; y < TETROMINO_MATRIX_SIZE; y++)
 		{
-			if (x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0 || x + cellX - (TETROMINO_MATRIX_SIZE / 2) > m_gridSize.x)
+			for (int x = 0; x < TETROMINO_MATRIX_SIZE; x++)
 			{
-				continue;
-			}
-			if (m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] == 0)
-			{
-				if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0))
+				if (x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0 || x + cellX - (TETROMINO_MATRIX_SIZE / 2) > m_gridSize.x)
 				{
-					if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 > m_gridSize.x))
+					continue;
+				}
+				if (m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] == 0)
+				{
+					if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 < 0))
 					{
-						m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] = m_copyMatrix[y][x];
+						if (!(x + cellX - TETROMINO_MATRIX_SIZE / 2 > m_gridSize.x))
+						{
+							m_grid[y + cellY][x + cellX - TETROMINO_MATRIX_SIZE / 2] = m_copyMatrix[y][x];
+						}
 					}
 				}
 			}
@@ -303,7 +312,6 @@ bool Grid::tetminoCollisionUpdate()
 		m_playerTetromino.setOrigin(sf::Vector2f(0, 0));
 		int cellY = m_playerTetromino.getPosition().y / SAND_SIZE;
 		int cellX = (m_playerTetromino.getPosition().x - GRID_OFFSET_X) / SAND_SIZE;
-		std::cout << cellY << " cellY" << std::endl;
 		for (int i = 0; i < TETROMINO_MATRIX_SIZE; i++)
 		{
 			if (cellY + TETROMINO_MATRIX_SIZE > m_gridSize.y || cellX + i > m_gridSize.x)
@@ -609,6 +617,7 @@ void Grid::eliminateConnectedCells()
 			{
 				m_grid[m_cellsReadyTodie[i].y][m_cellsReadyTodie[i].x] = 0;
 			}
+			m_scoreCounter += m_cellsReadyTodie.size();
 			m_eliminationIterator = 0;
 			m_cellsReadyTodie.clear();
 			unpauseGame();
@@ -671,6 +680,28 @@ void Grid::clickQuitButton(const sf::Vector2f& mousePos,sf::RenderWindow& window
 	if (m_quitButtonRect.getGlobalBounds().contains(mousePos))
 	{
 		window.close();
+	}
+}
+
+void Grid::scoreUpdate() 
+{
+	if (!(m_pause))
+	{
+		if (m_currentScore < m_scoreCounter)
+		{
+			m_currentScore += 3;
+			if (m_currentScore > m_scoreCounter)
+			{
+				m_currentScore = m_scoreCounter;
+			}
+			m_scoreText.setString(std::to_string(m_currentScore));
+			m_scoreText.setPosition(85 - m_scoreText.getGlobalBounds().width / 2, 20);
+		}
+		if (m_currentScore == 0)
+		{
+			m_scoreText.setString("000");
+			m_scoreText.setPosition(85 - m_scoreText.getGlobalBounds().width / 2, 20);
+		}
 	}
 }
 

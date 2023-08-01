@@ -42,6 +42,12 @@ private:
 	std::queue<sf::Vector2i> m_queue;
 	int lastColor;
 	int currentColor;
+	sf::Font PixelLikeFont;
+	sf::Text m_scoreText;
+	sf::Text m_scoreLetters;
+	int m_scoreCounter;
+	int m_currentScore;
+	
 public:
 	Grid();
 
@@ -100,4 +106,6 @@ public:
 	void clickButton(const sf::Vector2f& mousePos);
 
 	void clickQuitButton(const sf::Vector2f& mousePos, sf::RenderWindow& window);
+
+	void scoreUpdate();
  };

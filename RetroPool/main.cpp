@@ -45,19 +45,6 @@ int main()
                 {
                     game.rotationUpdate();
                 }
-                if (event.key.code == sf::Keyboard::A)
-                {
-                       //game.moveTetromnio(-1, 0, sideWallTwo);
-                }
-                if (event.key.code == sf::Keyboard::D)
-                {
-                        //game.moveTetromnio(1, 0, sideWallOne);
-                }
-                if (event.key.code == sf::Keyboard::S)
-                {
-                    // moves one cell down if pressed and if held dose hard drop
-                   // game.softAndHardDrop();
-                }
                 if (event.key.code == sf::Keyboard::P)
                 {
                     game.pauseButton();
@@ -78,13 +65,12 @@ int main()
             }
             if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
             {
+                // moves one cell down if pressed and if held dose hard drop
                 game.softAndHardDrop();
             }
             keybordspeed.restart();
         }
 
-
-        //game.run();
         if (clock.getElapsedTime() >= sf::milliseconds(30))
         {
             game.tetminoCollisionUpdate();
@@ -99,6 +85,7 @@ int main()
             clock2.restart();
         }
         game.eliminateConnectedCells();
+        game.scoreUpdate();
 
         window.clear();
         game.drawGrid(window);
