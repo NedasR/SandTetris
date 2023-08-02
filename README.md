@@ -13,6 +13,7 @@ A = Left
 S = Down will go down much faster  
 D = Right  
 P = Pause Game or Click on Puase Button  
+R = Rotate Tetromino  
 Quit = Click on Button  
 
 you can download the game enjoy made from sweat and tears  
