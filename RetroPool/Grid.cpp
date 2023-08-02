@@ -505,7 +505,6 @@ void Grid::resetVistedMap()
 void Grid::connectionDetection()
 {
 	resetVistedMap();
-	int count = 0;
 	for (int y = 0; y < m_gridSize.y; y++)
 	{
 		if (y > m_gridSize.y)
@@ -603,13 +602,11 @@ void Grid::connectionDetection()
 				m_eraseOn = true;
 			}
 			m_savedcells.push_back(current);
-			count++;
 			m_queue.pop();
 		}
 		lastColor = currentColor;
 		eraseConnectedCell(m_erase);
 	}
-	std::cout << count << std::endl;
 	/*
 	for (int i = 0; i < m_savedcells.size(); i++)
 	{
@@ -741,7 +738,6 @@ void Grid::bestScoreUpdate()
 {
 	if (m_currentScore > m_gamesBestScore && m_updateBestScoreFile)
 	{
-		std::cout << " runs ";
 		if (m_gamesBestScore < m_currentScore)
 		{
 			m_gamesBestScore = m_currentScore;
