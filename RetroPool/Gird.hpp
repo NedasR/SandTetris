@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include<iostream>
 #include <queue>
+#include <fstream>
 #define GRID_OFFSET_X 200
 #define SAND_SIZE 5.f
 #define TEXTURE_SIZE 80
@@ -10,6 +11,7 @@
 class Grid
 {
 private:
+	std::fstream m_gameBestScoreFile;
 	sf::Texture m_tetrominoTex[6];
 	sf::Color m_tetrominoColor[7];
 	sf::Texture m_buttonTex;
@@ -45,8 +47,11 @@ private:
 	sf::Font PixelLikeFont;
 	sf::Text m_scoreText;
 	sf::Text m_scoreLetters;
+	sf::Text m_bestScoreText;
 	int m_scoreCounter;
 	int m_currentScore;
+	int m_gamesBestScore;
+	bool m_updateBestScoreFile;
 	
 public:
 	Grid();
@@ -108,4 +113,8 @@ public:
 	void clickQuitButton(const sf::Vector2f& mousePos, sf::RenderWindow& window);
 
 	void scoreUpdate();
+
+	void bestScoreUpdate();
+
+	void loadBestScore();
  };

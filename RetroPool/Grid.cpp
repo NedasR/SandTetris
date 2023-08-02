@@ -6,6 +6,7 @@ Grid::Grid()
 	m_scoreCounter = 0;
 	m_eliminationIterator = 0;
 	m_eraseOn = false;
+	m_updateBestScoreFile = false;
 	m_pause = false;
 	lastColor = 0;
 	currentColor = 0;
@@ -24,9 +25,14 @@ Grid::Grid()
 	m_pausedText.setFont(m_fontForAllTexs);
 	m_scoreText.setFont(PixelLikeFont);
 	m_scoreLetters.setFont(PixelLikeFont);
+	m_bestScoreText.setFont(PixelLikeFont);
+	m_bestScoreText.setCharacterSize(30);
+	m_bestScoreText.setString("BEST SCORE");
 	m_scoreLetters.setCharacterSize(30);
 	m_scoreLetters.setString("SCORE");
 	m_scoreLetters.setPosition(85 - m_scoreLetters.getGlobalBounds().width/ 2, 90);
+	m_bestScoreText.setPosition(85 - m_scoreLetters.getGlobalBounds().width + 10, 180);
+	m_bestScoreText.setFillColor(sf::Color(176, 167, 167));
 	m_scoreText.setCharacterSize(70);
 	m_scoreText.setFillColor(sf::Color(176, 167, 167));
 	m_pausedText.setOutlineColor(sf::Color(77, 75, 71));
@@ -43,7 +49,7 @@ Grid::Grid()
 		{
 			m_grid[Y][X] = 0;
 			m_gridVisited[Y][X] = false;
-			if (X < m_gridSize.x && Y >= 60 && Y >= 70)
+			if (X < m_gridSize.x && Y >= 60 && Y <= 70)
 			{
 				m_grid[Y][X] = 4;
 			}
@@ -196,6 +202,7 @@ void Grid::drawGrid(sf::RenderWindow& window)
 	}
 	window.draw(m_scoreText);
 	window.draw(m_scoreLetters);
+	window.draw(m_bestScoreText);
 }
 
 void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
@@ -697,11 +704,37 @@ void Grid::scoreUpdate()
 			m_scoreText.setString(std::to_string(m_currentScore));
 			m_scoreText.setPosition(85 - m_scoreText.getGlobalBounds().width / 2, 20);
 		}
+		else {
+			m_updateBestScoreFile = true;
+		}
 		if (m_currentScore == 0)
 		{
 			m_scoreText.setString("000");
 			m_scoreText.setPosition(85 - m_scoreText.getGlobalBounds().width / 2, 20);
 		}
 	}
+}
+
+void Grid::bestScoreUpdate()
+{
+	if (m_currentScore > m_gamesBestScore && m_updateBestScoreFile)
+	{
+		std::cout << " runs ";
+		m_gamesBestScore = m_currentScore;
+		m_gameBestScoreFile.open("BestScore.txt", std::fstream::out);
+		m_gameBestScoreFile << m_gamesBestScore;
+		m_updateBestScoreFile = false;
+		m_gameBestScoreFile.close();
+	}
+}
+void Grid::loadBestScore()
+{
+	m_gameBestScoreFile.open("BestScore.txt", std::fstream::in);
+	// checks size of the file if it is 0 if statment dose not run
+	if (m_gameBestScoreFile.peek())
+	{
+		m_gameBestScoreFile >> m_gamesBestScore;
+	}
+	m_gameBestScoreFile.close();
 }
 

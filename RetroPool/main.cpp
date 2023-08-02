@@ -14,6 +14,7 @@ int main()
     game.spawnTetromino(4,2);
     game.makeClickablePauseButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 600));
     game.makeClickableQuitButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 680));
+    game.loadBestScore();
     sf::Clock clock;
     sf::Clock clock2;
     std::srand(static_cast<unsigned int>(std::time(0)));
@@ -86,6 +87,7 @@ int main()
         }
         game.eliminateConnectedCells();
         game.scoreUpdate();
+        game.bestScoreUpdate();
 
         window.clear();
         game.drawGrid(window);
