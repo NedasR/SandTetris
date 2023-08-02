@@ -11,6 +11,7 @@
 class Grid
 {
 private:
+	std::queue<sf::Vector2i> nextTetrmanio;
 	std::fstream m_gameBestScoreFile;
 	sf::Texture m_tetrominoTex[6];
 	sf::Color m_tetrominoColor[7];
@@ -25,6 +26,7 @@ private:
 	sf::RectangleShape m_rectangle;
 	sf::RectangleShape m_pauseButtonRect;
 	sf::RectangleShape m_quitButtonRect;
+	sf::Sprite nextTetrmanioRect;
 	sf::Sprite m_playerTetromino;
 	sf::Texture m_texture;
 	sf::Vector2i m_gridSize;
@@ -48,6 +50,7 @@ private:
 	sf::Text m_scoreText;
 	sf::Text m_scoreLetters;
 	sf::Text m_bestScoreText;
+	sf::Text m_bestScoreNum;
 	int m_scoreCounter;
 	int m_currentScore;
 	int m_gamesBestScore;

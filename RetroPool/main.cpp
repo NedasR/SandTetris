@@ -11,13 +11,15 @@ int main()
     sideWallTwo.setFillColor(sf::Color(66, 65, 62));
     window.setFramerateLimit(60);
     Grid game;
-    game.spawnTetromino(4,2);
+    std::srand(static_cast<unsigned int>(std::time(0)));
+    game.randomTetromino();
     game.makeClickablePauseButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 600));
     game.makeClickableQuitButton(sf::Vector2f(120, 60), sf::Vector2f(595 + ((205 + sideWallTwo.getSize().x - 120) / 2), 680));
     game.loadBestScore();
     sf::Clock clock;
     sf::Clock clock2;
     std::srand(static_cast<unsigned int>(std::time(0)));
+    game.randomTetromino();
     sf::Event event;
     sf::Clock keybordspeed;
     while (window.isOpen())

@@ -26,18 +26,25 @@ Grid::Grid()
 	m_scoreText.setFont(PixelLikeFont);
 	m_scoreLetters.setFont(PixelLikeFont);
 	m_bestScoreText.setFont(PixelLikeFont);
+	m_bestScoreNum.setFont(PixelLikeFont);
 	m_bestScoreText.setCharacterSize(30);
+	m_bestScoreNum.setCharacterSize(70);
 	m_bestScoreText.setString("BEST SCORE");
 	m_scoreLetters.setCharacterSize(30);
 	m_scoreLetters.setString("SCORE");
 	m_scoreLetters.setPosition(85 - m_scoreLetters.getGlobalBounds().width/ 2, 90);
 	m_bestScoreText.setPosition(85 - m_scoreLetters.getGlobalBounds().width + 10, 180);
+	m_bestScoreNum.setPosition(85 - m_scoreLetters.getGlobalBounds().width / 2, 110);
 	m_bestScoreText.setFillColor(sf::Color(176, 167, 167));
+	m_bestScoreNum.setFillColor(sf::Color(176, 167, 167));
+	m_bestScoreNum.setString("000");
 	m_scoreText.setCharacterSize(70);
 	m_scoreText.setFillColor(sf::Color(176, 167, 167));
 	m_pausedText.setOutlineColor(sf::Color(77, 75, 71));
 	m_pausedText.setOutlineThickness(6);
 	m_pausedText.setPosition((400 - m_pausedText.getGlobalBounds().width / 2), 100);
+	nextTetrmanioRect.setPosition(sf::Vector2f(620, 120));
+	nextTetrmanioRect.setScale(2, 2);
 	int gridOffsetX = GRID_OFFSET_X;
 	int sandSize = SAND_SIZE;
 	m_playerGravity = 0;
@@ -49,10 +56,6 @@ Grid::Grid()
 		{
 			m_grid[Y][X] = 0;
 			m_gridVisited[Y][X] = false;
-			if (X < m_gridSize.x && Y >= 60 && Y <= 70)
-			{
-				m_grid[Y][X] = 4;
-			}
 		}
 	}
 }
@@ -203,6 +206,9 @@ void Grid::drawGrid(sf::RenderWindow& window)
 	window.draw(m_scoreText);
 	window.draw(m_scoreLetters);
 	window.draw(m_bestScoreText);
+	window.draw(m_bestScoreNum);
+	window.draw(nextTetrmanioRect);
+	
 }
 
 void Grid::spawnTetromino(const int& tetrminoType, const int& tetrmnioColor)
@@ -456,7 +462,22 @@ void Grid::rectangleBoundsFix()
 
 void Grid::randomTetromino()
 {
-	spawnTetromino(std::rand() % 5 +1, std::rand() % 5+1);
+	if (nextTetrmanio.empty())
+	{
+		nextTetrmanio.push(sf::Vector2i(std::rand() % 5 + 1, std::rand() % 5 + 1));
+		nextTetrmanio.push(sf::Vector2i(std::rand() % 5 + 1, std::rand() % 5 + 1));
+	}
+
+	if (nextTetrmanio.size() == 1)
+	{
+		nextTetrmanio.push(sf::Vector2i(std::rand() % 5 + 1, std::rand() % 5 + 1));
+	}
+
+    nextTetrmanioRect.setTexture(m_tetrominoTex[nextTetrmanio.back().x]);
+	nextTetrmanioRect.setColor(m_tetrominoColor[nextTetrmanio.back().y]);
+
+	spawnTetromino(nextTetrmanio.front().x, nextTetrmanio.front().y);
+	nextTetrmanio.pop();
 }
 
 void Grid::wipeCopyMatrix()
@@ -697,6 +718,7 @@ void Grid::scoreUpdate()
 		if (m_currentScore < m_scoreCounter)
 		{
 			m_currentScore += 3;
+
 			if (m_currentScore > m_scoreCounter)
 			{
 				m_currentScore = m_scoreCounter;
@@ -720,7 +742,12 @@ void Grid::bestScoreUpdate()
 	if (m_currentScore > m_gamesBestScore && m_updateBestScoreFile)
 	{
 		std::cout << " runs ";
-		m_gamesBestScore = m_currentScore;
+		if (m_gamesBestScore < m_currentScore)
+		{
+			m_gamesBestScore = m_currentScore;
+			m_bestScoreNum.setString(std::to_string(m_gamesBestScore));
+		}
+		m_bestScoreNum.setString(std::to_string(m_gamesBestScore));
 		m_gameBestScoreFile.open("BestScore.txt", std::fstream::out);
 		m_gameBestScoreFile << m_gamesBestScore;
 		m_updateBestScoreFile = false;
@@ -734,6 +761,15 @@ void Grid::loadBestScore()
 	if (m_gameBestScoreFile.peek())
 	{
 		m_gameBestScoreFile >> m_gamesBestScore;
+		m_bestScoreNum.setString(std::to_string(m_gamesBestScore));
+	}
+	else
+	{
+		m_bestScoreNum.setString("000");
+	}
+	if (m_gamesBestScore == 0)
+	{
+		m_bestScoreNum.setString("000");
 	}
 	m_gameBestScoreFile.close();
 }
