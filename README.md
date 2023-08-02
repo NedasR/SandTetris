@@ -14,3 +14,6 @@ S = Down will go down much faster
 D = Right  
 P = Pause Game or Click on Puase Button  
 Quit = Click on Button  
+
+you can download the game enjoy made from sweat and tears  
+[Download Sand Tetris](https://github.com/NedasR/SandTeris/raw/main/Sand%20Tetris.7z)
