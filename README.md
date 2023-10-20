@@ -12,9 +12,9 @@ Controls :
 A = Left  
 S = Down will go down much faster  
 D = Right  
-P = Pause Game or Click on Puase Button  
+P = Pause the Game or Click on the Pause Button  
 R = Rotate Tetromino  
 Quit = Click on Button  
 
-you can download the game enjoy made from sweat and tears  
+You can download the game and enjoy made from sweat and tears.  
 [Download Sand Tetris](https://github.com/NedasR/SandTeris/raw/main/Sand%20Tetris.7z)
